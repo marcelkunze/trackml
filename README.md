@@ -27,7 +27,7 @@ The hit data are sorted into voxels organized in directed acyclic graphs (DAG) i
     cd trackml
     make eval
     
-the _eval_ program is good for evaluation purposes. For debugging and training purposes the following _tracker_ program should be built (Requires the installation of te ROOT framework):
+the _eval_ program is good for evaluation purposes. For debugging and training purposes the _tracker_ program should be built (Requires the installation of te ROOT framework):
 
     make tracker
 
@@ -37,7 +37,7 @@ Parameters and operational modes of the model are centrally defined in _Paramete
     ./eval 21001
     ./tracker 21001
 
-Processing is generally done in a container environment using a 50 events data set (training_000021450_000021499). The model can be tested by running it in a docker container:
+Processing is generally done in a container environment using a 50 events data set (training_000021450_000021499). The model can be tested by running it in a docker container using the CodaLab framework (Works w/o dependencies to external packages):
 
     ./rundocker.sh
 
