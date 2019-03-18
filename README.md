@@ -21,7 +21,7 @@ The hit data are sorted into voxels organized in directed acyclic graphs (DAG) i
 * C++11 with STL
 * [Neural Network Objects](https://github.com/marcelkunze/rhonno) for training
 * [ROOT framework](https://root.cern.ch/) for training
-* docker or singularity
+* docker or singularity for testing and tuning
 
 ## DATA SETUP
     git clone https://github.com/marcelkunze/trackml.git
