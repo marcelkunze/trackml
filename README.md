@@ -41,7 +41,7 @@ Processing is generally done in a container environment using a 50 events data s
 
     ./rundocker.sh
 
-This also produces a zip-file of all files to be submitted to CodaLab.
+This builds the C++ shared library and produces a zip-file of all files to be submitted to CodaLab. The model is executed in a python framework in the _run_ directory. 
 
 The model works with [singularity](https://www.sylabs.io/) containers as well:
 
