@@ -20,16 +20,21 @@ The hit data are sorted into voxels organized in directed acyclic graphs (DAG) i
 ## SOFTWARE
 * C++11 with STL
 * [Neural Network Objects](https://github.com/marcelkunze/rhonno) for training
-* [Root framework](https://root.cern.ch/) for training
+* [ROOT framework](https://root.cern.ch/) for training
 
 ## DATA SETUP
     git clone https://github.com/marcelkunze/trackml.git
     cd trackml
-    make
+    make eval
+    
+the _eval_ program is good for evaluation purposes. For debugging and training purposes the following _tracker_ program should be built (Requires the installation of te ROOT framework):
+
+    make tracker
 
 ## DATA PROCESSING
 Parameters and operational modes of the model are centrally defined in _Parameters.h_. The _DATAPATH_, the _WORKPATH_, and the _TRAINPATH_ need to be adapted to fit the local installation.
 
+    ./eval 21001
     ./tracker 21001
 
 Processing is generally done in a container environment using a 50 events data set (training_000021450_000021499). The model can be tested by running it in a docker container:
@@ -67,7 +72,7 @@ There are three neural networks for pattern recognition:
 * XMLP2 for hit pair recognition (9-15-5-1 multilayer perceptron), good esp. in central detector region
 * XMLP3 for hit triple recognition (10-15-5-1 multilayer perceptron), good everywhere
 
-The neural networks are trained with ntuples stored in [root files](https://root.cern.ch/). These are produced if the flag *TRAINFILE* is set in the programs. The training has been performed with the NetworkTrainer of the [Neural Network Objects](https://github.com/marcelkunze/rhonno) by use of the corresponding training files, e.g.
+The neural networks are trained with ntuples stored in [ROOT files](https://root.cern.ch/). These are produced if the flag *TRAINFILE* is set in the programs. The training has been performed with the NetworkTrainer of the [Neural Network Objects](https://github.com/marcelkunze/rhonno) by use of the corresponding training files, e.g.
 
     NetworkTrainer train1.nno
     NetworkTrainer train2.nno
