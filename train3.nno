@@ -1,0 +1,39 @@
+# Training of tracks with NNO
+
+#define the network topology
+xmlp 10 15 5 1
+transfer TR_FERMI
+momentum 0.2
+#balance true
+plots true
+test 100000
+start 1
+stop 1000
+threshold 0.75
+
+#set up the input layer (use branch names)
+tree tracks3
+input 0.001*rz1:phi1:0.001*z1:0.001*rz2:phi2:0.001*z2:0.001*rz3:phi3:0.001*z3:score
+
+#autoscale true
+#cut (l1==0)||(l1==4)||(l1==11)
+
+#set up the output layer (use branch names)
+output truth>0
+
+#define the data source
+datapath /Users/marcel/workspace/train_xmlp
+
+networkpath ../Networks
+
+#file event000021100.root
+file event000021101.root
+file event000021102.root
+file event000021103.root
+file event000021104.root
+file event000021105.root
+file event000021106.root
+#file event000021107.root
+#file event000021108.root
+#file event000021109.root
+#file event000021110.root
