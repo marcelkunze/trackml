@@ -1,10 +1,10 @@
-Below you can find a outline of how to reproduce my solution for the CodaLab trackML throughput competition.
+Below you can find a outline of how to reproduce my solution for the [CodaLab trackML throughput competition](https://competitions.codalab.org/competitions/20112).
 If you run into any trouble with the setup/code or have any questions please contact me at marcel@cloudkitchen.info.
 
 # A multi threaded global tracking algorithm based on directed acyclic graphs and machine learning
 
 The algorithm has been designed to make use of artificial neural networks for pattern recognition on the basis of spatial coordinates together with simple geometrical information such as directional cosines or a helix score calculation. Typical patterns to be investigated are hit pairs and triples that might seed candidate tracks. The training of the networks was accomplished by presentation of typically 5 million ground truth patterns over 500 epochs.
-The hit data are sorted into voxels organized in directed acyclic graphs (DAG) in order to allow for fast track propagation. In addition to the spatial hit data the DAGs hold information about the network model to apply, and a z vertex estimate derived from ground truth. As they combine the data with the corresponding methods the DAGs form a nice foundation to define tasks that can be run in parallel very efficiently in a multi threaded environment. There are two sets of graphs: One set covers detector slices wrt. the z-axis, the other covers phi/theta tiles. Each set would work perfectly well by itself, but a clever combination of the two yields the best CodaLab score: The first set is used to seed the pair finder while the other drives the triple finder (COMBINEDMETHOD).
+The hit data are sorted into voxels organized in directed acyclic graphs (DAG) in order to allow for fast track propagation. In addition to the spatial hit data the DAGs hold information about the network model to apply, and a z vertex estimate derived from ground truth. As they combine the data with the corresponding methods the DAGs form a nice foundation to define tasks that can be run in parallel very efficiently in a multi threaded environment. There are two sets of graphs: One set covers detector slices wrt. the z-axis, the other covers phi/theta tiles. Each set would work perfectly well by itself, but a clever combination of the two yields the best CodaLab score: The first set is used to seed the pair finder while the other drives the triple finder.
 
 ## ARCHIVE CONTENTS
     *.cxx, *.h   : source files
@@ -28,17 +28,17 @@ The hit data are sorted into voxels organized in directed acyclic graphs (DAG) i
     cd trackml
     make eval
     
-the _eval_ program is good for evaluation purposes. For debugging and training purposes the _tracker_ program should be built (Requires the installation of te ROOT framework):
+This builds a shared library _libmodel.so_ and the _eval_ C++ driver program that is good for evaluation purposes. For debugging and training purposes the _tracker_ program should be built (requires the installation of the ROOT framework):
 
     make tracker
 
 ## DATA PROCESSING
-Parameters and operational modes of the model are centrally defined in _Parameters.h_. The _DATAPATH_, the _WORKPATH_, and the _TRAINPATH_ need to be adapted to fit the local installation.
+Parameters and operational modes of the model are centrally defined in _Parameters.h_. The _DATAPATH_, the _WORKPATH_, and the _TRAINPATH_ need to be adapted to fit the local installation. The model is run with
 
-    ./eval 21001
-    ./tracker 21001
+    ./eval 21001 10
+    ./tracker 21001 10
 
-Processing is generally done in a container environment using a 50 events data set (training_000021450_000021499). The model can be tested by running it in a docker container using the CodaLab framework (Works w/o dependencies to external packages):
+where the arguments denote the event and the number of events to be processed in sequence, respectively. Processing is generally done in a container environment using a 50 events data set (training_000021450_000021499). The model can be tested by running it in a docker container using the CodaLab framework (Works w/o dependencies to external packages):
 
     ./rundocker.sh
 
