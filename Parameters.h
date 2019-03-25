@@ -45,11 +45,11 @@
 #ifdef _WIN32
 #define TRAINPATH "C:/Users/marce/workspace/train_xmlp"
 #define DATAPATH "C:/Users/marce/workspace/train_sample"
-#define WORKPATH "C:/Users/marce/workspace/tracking"
+#define WORKPATH "C:/Users/marce/workspace/trackml"
 #else
 #define TRAINPATH "/Users/marcel/workspace/train_xmlp"
 #define DATAPATH "/Users/marcel/workspace/train_sample"
-#define WORKPATH "/Users/marcel/workspace/tracking"
+#define WORKPATH "/Users/marcel/workspace/trackml"
 #define MEMORY
 #endif
 
