@@ -149,10 +149,9 @@ int* Tracker::findTracks(int step, const char *workpath)
             int task = tasks.top().first;
             auto *g = tasks.top().second;
             tasks.pop();
-            mylock.unlock();
-            
             cout << "thread " << i << " task " << task << endl;
-            
+            mylock.unlock();
+                        
             // Find promising pairs
             auto threadPairs = reco[i]->findCandidatesGraph(*g); // Pair candidates
             auto threadTriples = reco[i]->findTriplesGraph(*g,threadPairs); // Extend pairs to triples
