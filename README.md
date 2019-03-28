@@ -83,4 +83,4 @@ The neural networks are trained with ntuples stored in [ROOT files](https://root
     NetworkTrainer train2.nno
     NetworkTrainer train3.nno
 
-The supervised training takes about half an hour for 500 epochs of 4-5 million patterns each (extracted from ca. 10 events). For each epoch the corresponding network files are stored for in the _Networks_ directory. 
+The supervised training takes about half an hour for 500 epochs of 4-5 million patterns each (extracted from ca. 10 events). For each epoch the network file is stored in the _Networks_ directory with a corresponding name. The network with the best validation performance is named _NNO0000.TXMLP_. After the training a suiting network has to be copied over to the _xmlp_ directory respecting the names defined in _Parameters.h_.
