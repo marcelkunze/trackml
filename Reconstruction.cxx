@@ -505,7 +505,7 @@ vector<vector<int> > Reconstruction::findPaths(vector<triple>&triples) {
                 ai = di;
                 misses = 0;
             } else if (di == -1) misses++;
-            if (misses == 1) break;
+            if (misses == 2) break;
         }
         reverse(v.begin(), v.end());
         
