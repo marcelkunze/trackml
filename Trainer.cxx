@@ -13,14 +13,10 @@
 #include "Reconstruction.h"
 #include "Graph.h"
 #include "load.h"
-#include "parallel.h"
 
 using namespace std;
 
 TRandom r;
-
-#define PARALLEL_FOR_BEGIN(nb_elements) parallel_for(nb_elements, [&](int start, int end){ for(int i = start; i < end; ++i)
-#define PARALLEL_FOR_END()},MULTITHREAD)
 
 void Trainer::transform(Particle &particle, std::vector<point> &points) {
     
@@ -59,21 +55,16 @@ void Trainer::generateTrainingData(const char *base_path,int filenum) {
     initRecoObjects(n);
     initTasks();
     
-    static mutex mylock;
-    PARALLEL_FOR_BEGIN(n)
+    for (int i=0;i<n;i++)
     {
         while (!tasks.empty()) {
-            // get a task from the stack (beware of race hazards)
-            mylock.lock();
             if (tasks.empty()) break;
             auto *g = tasks.top().second;
             tasks.pop();
             auto triples3  = makeTrainPairs(i,*g,*ntuple2);
             makeTrain3(i,triples3,*ntuple3);
-            mylock.unlock();
         }
     }
-    PARALLEL_FOR_END();
 
     ntuple2->Write();
     ntuple3->Write();
