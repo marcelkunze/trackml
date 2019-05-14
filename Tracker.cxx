@@ -944,16 +944,13 @@ void Tracker::scoreAssignment2(map<int,int> &assignment) {
 //Decides which pairs to fit logistic model to
 int Tracker::good_pair(int a, int b) {
     if (a==b) return 0;
+    if (truth_part[a]==0 && truth_part[b]==0) return 0; // NA hits
     if (!samepart(a, b)) return 0;
     int ai = metai[a];
     int bi = metai[b];
     if (ai==bi) return 1; // ai==bi, double hits
     point s = start_pos[truth_part[a]];
     if (s.x*s.x+s.y*s.y < (VERTEXCUTXY*VERTEXCUTXY) && abs(s.z)<VERTEXCUTZ) return 2; // inside cylinder / vertex region (primary tracks)
-    auto &v = truth_tracks[truth_part[a]];
-    if (ai > bi) swap(ai, bi);
-    for (int i : v)
-        if (metai[i] < ai || (metai[i] > ai && metai[i] < bi)) return 3; // outside cylinder, inward hits exist (secondary tracks)
     return -1;
 }
 
