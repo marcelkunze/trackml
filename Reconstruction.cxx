@@ -188,7 +188,7 @@ vector<triple> Reconstruction::findCandidatesGraph(Graph<long long> &g)
                             if (recall < threshold1+offset[i]) continue;
                         }
                         else {
-                            recall = recall2(g,ai,bi,dir1,dir2,0.001*score,vz); // Search for hit pairs using coordinates, hit direction, and helix score
+                            recall = recall2(g,ai,bi,dir1,dir2,score,vz); // Search for hit pairs using coordinates, hit direction, and helix score
                             if (recall < threshold2+offset[i]) continue;
                         }
                         
@@ -350,7 +350,7 @@ double Reconstruction::recall2(Graph<long long> &g,int a, int b, double f1, doub
 #endif
     x[6]    = f1;           // feature
     x[7]    = f2;           // feature
-    x[8]    = f3;           // feature
+    x[8]    = 0.001*f3;     // feature
     
     double recall = g.net2()->Recallstep(x)[0];
 #endif
