@@ -328,7 +328,7 @@ double Reconstruction::recall2(Graph<long long> &g,int a, int b, double f1, doub
     x.push_back(p2.z);
     x.push_back(f1);
     x.push_back(f2);
-    x.push_back(f3);
+    x.push_back(log(f3));
     double recall = g.getNet2()->GetMvaValue(x);
 #else
 
