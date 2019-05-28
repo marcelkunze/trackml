@@ -1,7 +1,6 @@
 // Neural Network based path reconstruction
 // M.Kunze, Heidelberg University, 2018
 
-//#define ROOTSYS
 #include <cmath>
 #include <queue>
 #include <sstream>
@@ -9,10 +8,12 @@
 #include "Parameters.h"
 #include "Reconstruction.h"
 #include "PolarModule.h"
+#ifdef USETMVA
+#include "TMVAClassification_MLP1.h"
+#include "TMVAClassification_MLP2.h"
+#include "TMVAClassification_MLP3.h"
+#else
 #include "XMLP.h"
-#ifdef ROOTSYS
-#include "TFile.h"
-#include "TNtuple.h"
 #endif
 
 extern PolarModule *mod[LAYERS];
@@ -51,30 +52,11 @@ Reconstruction::Reconstruction(int event,const char *workpath,std::map<std::pair
     threshold1 = 0.1;
     threshold2 = 0.1;
     threshold3 = 0.3;
-    
-#ifdef ROOTSYS
-    const char *fname[1000];
-    sptintf(fname,"%s/event%09d.root",workPath.c_str(),eventnum);
-    if (file==NULL) file = TFile::Open(fname,"RECREATE");
-    const string tuple1("rz1:phi1:z1:rz2:phi2:z2:f0:f1:z0:r1");
-    const string tuple2("rz1:phi1:z1:rz2:phi2:z2:f0:f1:f2:r2");
-    const string tuple3("rz1:phi1:z1:rz2:phi2:z2:rz3:phi3:z3:f0:z0:r3");
-    if (ntuple1==NULL) ntuple1 = new TNtuple("reco1","training data",tuple1.c_str());
-    if (ntuple2==NULL) ntuple2 = new TNtuple("reco2","training data",tuple2.c_str());
-    if (ntuple3==NULL) ntuple3 = new TNtuple("reco3","training data",tuple3.c_str());
-#endif
 }
 
 Reconstruction::~Reconstruction()
 {
-#ifdef ROOTSYS
-    if (ntuple1!=NULL) { ntuple1->Write(); delete ntuple1; ntuple1 = NULL; }
-    if (ntuple2!=NULL) { ntuple2->Write(); delete ntuple2; ntuple2 = NULL; }
-    if (ntuple3!=NULL) { ntuple3->Write(); delete ntuple3; ntuple3 = NULL; }
-    if (file!=NULL) { file->Close(); file = NULL; }
-#endif
 }
-
 
 std::pair<int,int> Reconstruction::graphHash(int hitid) {
     
@@ -288,11 +270,23 @@ std::vector<triple> Reconstruction::findTriplesGraph(Graph<long long> &g,vector<
 // Recall function for 2 points (cylinder coordinates)
 double Reconstruction::recall1(Graph<long long> &g,int a, int b, double f1, double f2, double z0)
 {
-    float x[10];
-    
     point &p1 = polar[a];
     point &p2 = polar[b];
     
+#ifdef USETMVA
+    vector<double> x;
+    x.push_back(p1.x);
+    x.push_back(p1.y);
+    x.push_back(p1.z);
+    x.push_back(p2.x);
+    x.push_back(p2.y);
+    x.push_back(p2.z);
+    x.push_back(f1);
+    x.push_back(f2);
+    double recall = g.getNet1()->GetMvaValue(x);
+#else
+
+    float x[10];
 #ifdef FOLDEDINPUT1
     x[0]    = p1.x*0.001;               // rz1 [m]
     x[1]    = fabs(fabs(p1.y)-M_PI_2);  // phi1
@@ -310,16 +304,8 @@ double Reconstruction::recall1(Graph<long long> &g,int a, int b, double f1, doub
 #endif
     x[6]    = f1;           // feature
     x[7]    = f2;           // feature
-    
+
     double recall = g.net1()->Recallstep(x)[0];
-    
-#ifdef ROOTSYS
-    x[8] = z0;
-    x[9] = recall;
-    static mutex mylock;
-    mylock.lock();
-    ntuple1->Fill(x);
-    mylock.unlock();
 #endif
     
     return recall;
@@ -329,11 +315,24 @@ double Reconstruction::recall1(Graph<long long> &g,int a, int b, double f1, doub
 // Recall function for 2 points (folded cylinder coordinates)
 double Reconstruction::recall2(Graph<long long> &g,int a, int b, double f1, double f2, double f3, double z0)
 {
-    float x[10];
-    
     point &p1 = polar[a];
     point &p2 = polar[b];
-    
+
+#ifdef USETMVA
+    vector<double> x;
+    x.push_back(p1.x);
+    x.push_back(p1.y);
+    x.push_back(p1.z);
+    x.push_back(p2.x);
+    x.push_back(p2.y);
+    x.push_back(p2.z);
+    x.push_back(f1);
+    x.push_back(f2);
+    x.push_back(f3);
+    double recall = g.getNet2()->GetMvaValue(x);
+#else
+
+    float x[10];
 #ifdef FOLDEDINPUT2
     x[0]    = p1.x*0.001;               // rz1 [m]
     x[1]    = fabs(fabs(p1.y)-M_PI_2);  // phi1
@@ -354,13 +353,6 @@ double Reconstruction::recall2(Graph<long long> &g,int a, int b, double f1, doub
     x[8]    = f3;           // feature
     
     double recall = g.net2()->Recallstep(x)[0];
-    
-#ifdef ROOTSYS
-    x[9] = recall;
-    static mutex mylock;
-    mylock.lock();
-    ntuple2->Fill(x);
-    mylock.unlock();
 #endif
     
     return recall;
@@ -382,12 +374,26 @@ double Reconstruction::recall3(Graph<long long> &g,triple &t)
 // Recall function for 3 points (cylinder coordinates)
 double Reconstruction::recall3(Graph<long long> &g,int a, int b, int c, double f1, double z0)
 {
-    float x[12];
-    
     point &p1 = polar[a];
     point &p2 = polar[b];
     point &p3 = polar[c];
     
+#ifdef USETMVA
+    vector<double> x;
+    x.push_back(p1.x);
+    x.push_back(p1.y);
+    x.push_back(p1.z);
+    x.push_back(p2.x);
+    x.push_back(p2.y);
+    x.push_back(p2.z);
+    x.push_back(p3.x);
+    x.push_back(p3.y);
+    x.push_back(p3.z);
+    x.push_back(log(f1));
+    double recall = g.getNet3()->GetMvaValue(x);
+#else
+
+    float x[12];
 #ifdef FOLDEDINPUT3
     x[0]    = p1.x*0.001;               // rz1 [m]
     x[1]    = fabs(fabs(p1.y)-M_PI_2);  // phi1
@@ -412,13 +418,6 @@ double Reconstruction::recall3(Graph<long long> &g,int a, int b, int c, double f
     x[9]    = f1;           // feature
     double recall = g.net3()->Recallstep(x)[0];
     
-#ifdef ROOTSYS
-    x[10] = z0;
-    x[11] = recall;
-    static mutex mylock;
-    mylock.lock();
-    ntuple3->Fill(x);
-    mylock.unlock();
 #endif
     
     return recall;

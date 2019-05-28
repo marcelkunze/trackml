@@ -13,6 +13,10 @@
 #include <functional>
 
 class XMLP;
+class ReadMLP1;
+class ReadMLP2;
+class ReadMLP3;
+namespace TMVA { class Reader; }
 
 template <typename T>
 class Graph
@@ -25,9 +29,14 @@ private:
     XMLP                             *n1,
                                      *n2,
                                      *n3;
+    ReadMLP1 *mlp1;
+    ReadMLP2 *mlp2;
+    ReadMLP3 *mlp3;
+    TMVA::Reader *reader1,*reader2,*reader3;
+    
 public:
     
-    Graph() : n1(NULL), n2(NULL), n3(NULL) {};
+    Graph() : n1(NULL), n2(NULL), n3(NULL), mlp1(NULL), mlp2(NULL), mlp3(NULL), reader1(NULL), reader2(NULL), reader3(NULL) {};
     ~Graph() {};
 
     void setNet1(XMLP *net) {n1 = net;}
@@ -36,7 +45,14 @@ public:
     XMLP *net1() const { return n1;}
     XMLP *net2() const { return n2;}
     XMLP *net3() const { return n3;}
-    
+  
+    void setNet1(ReadMLP1 *net) {mlp1 = net;}
+    void setNet2(ReadMLP2 *net) {mlp2 = net;}
+    void setNet3(ReadMLP3 *net) {mlp3 = net;}
+    ReadMLP1 *getNet1() const { return mlp1;}
+    ReadMLP2 *getNet2() const { return mlp2;}
+    ReadMLP3 *getNet3() const { return mlp3;}
+
     void add(T n) // node
     {
         //if (fEdges.find(n)==fEdges.end()) return; // The node exists

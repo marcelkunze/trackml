@@ -5,8 +5,15 @@
 #include "Reconstruction.h"
 #include "PolarModule.h"
 #include "Graph.h"
-#include "XMLP.h"
 #include "parallel.h"
+
+#ifdef USETMVA
+#include "TMVAClassification_MLP1.h"
+#include "TMVAClassification_MLP2.h"
+#include "TMVAClassification_MLP3.h"
+#else
+#include "XMLP.h"
+#endif
 
 #include <iostream>
 #include <iomanip>
@@ -403,6 +410,27 @@ void Tracker::initNeuralNetworks()
     cout << "initNeuralNetworks: Reading networks from " << path1 << " " << path2 << " " << path3 << endl;
     cout << NETFILE1 << " " << NETFILE2 << " " << NETFILE3 << endl;
     
+#ifdef USETMVA
+
+    vector<string> inputVar1 = { "rz1", "phi1", "z1", "rz2", "phi2", "z2", "f0", "f1" };
+    vector<string> inputVar2 = { "rz1", "phi1", "z1", "rz2", "phi2", "z2", "f0", "f1", "log(score)" };
+    vector<string> inputVar3 = { "rz1", "phi1", "z1", "rz2", "phi2", "z2", "rz3", "phi3", "z3", "log(score)" };
+
+    for (int i=0;i<NSLICES;i++) {
+        if (pgraph[i].getNet1()==NULL) pgraph[i].setNet1(new ReadMLP1(inputVar1));
+        if (pgraph[i].getNet2()==NULL) pgraph[i].setNet2(new ReadMLP2(inputVar2));
+        if (pgraph[i].getNet3()==NULL) pgraph[i].setNet3(new ReadMLP3(inputVar3));
+    }
+
+    for (auto &t : tgraph) {
+        auto &g = t.second;
+        if (g.getNet1()==NULL) g.setNet1(new ReadMLP1(inputVar1));
+        if (g.getNet2()==NULL) g.setNet2(new ReadMLP2(inputVar2));
+        if (g.getNet3()==NULL) g.setNet3(new ReadMLP3(inputVar3));
+    }
+
+#else
+
     for (int i=0;i<NSLICES;i++) {
         string name1(NETFILE1);
         string name2(NETFILE2);
@@ -421,7 +449,8 @@ void Tracker::initNeuralNetworks()
         if (g.net2()==NULL) g.setNet2(new XMLP(netfile2.c_str()));
         if (g.net3()==NULL) g.setNet3(new XMLP(netfile3.c_str()));
     }
-    
+
+#endif
 }
 
 

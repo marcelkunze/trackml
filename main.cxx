@@ -126,7 +126,8 @@ int main(int argc, char**argv) {
     }
     
     cout << endl << "events: " << nprocessed << "  average score: " << score/nprocessed << endl << endl;
-    
+
+    return 0;
 }
 
 #ifdef DRAW

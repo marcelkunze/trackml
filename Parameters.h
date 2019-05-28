@@ -5,6 +5,7 @@
 
 // Reconstruction
 
+//#define USETMVA
 #define FOLDEDINPUT1
 #define FOLDEDINPUT2
 #define STARTLAYERS 30
