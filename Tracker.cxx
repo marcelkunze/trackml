@@ -8,6 +8,10 @@
 #include "parallel.h"
 
 #ifdef USETMVA
+#ifdef TMVAREADER
+#include "TMVA/Tools.h"
+#include "TMVA/Reader.h"
+#endif
 #include "TMVAClassification_MLP1.h"
 #include "TMVAClassification_MLP2.h"
 #include "TMVAClassification_MLP3.h"
@@ -403,11 +407,9 @@ void Tracker::generateTileGraphs(const char *directory) {
 // initialize the ANNs
 void Tracker::initNeuralNetworks()
 {
-    string path1(string(workPath)+"/"+XMLP1DIR+"/");
-    string path2(string(workPath)+"/"+XMLP2DIR+"/");
-    string path3(string(workPath)+"/"+XMLP3DIR+"/");
+    string directory(string(workPath)+"/"+XMLPDIR+"/");
     
-    cout << "initNeuralNetworks: Reading networks from " << path1 << " " << path2 << " " << path3 << endl;
+    cout << "initNeuralNetworks: Reading networks from " << directory << endl;
     cout << NETFILE1 << " " << NETFILE2 << " " << NETFILE3 << endl;
     
 #ifdef USETMVA
@@ -416,6 +418,68 @@ void Tracker::initNeuralNetworks()
     vector<string> inputVar2 = { "rz1", "phi1", "z1", "rz2", "phi2", "z2", "f0", "f1", "log(score)" };
     vector<string> inputVar3 = { "rz1", "phi1", "z1", "rz2", "phi2", "z2", "rz3", "phi3", "z3", "log(score)" };
 
+#ifdef TMVAREADER
+    string file1 = string(directory)+"/"+TMVAFILE1;
+    string file2 = string(directory)+"/"+TMVAFILE2;
+    string file3 = string(directory)+"/"+TMVAFILE3;
+    
+    for (int i=0;i<NSLICES;i++) {
+        if (pgraph[i].getReader1()==NULL) pgraph[i].setReader1(new TMVA::Reader( "!Color:!Silent" ));
+        if (pgraph[i].getReader2()==NULL) pgraph[i].setReader2(new TMVA::Reader( "!Color:!Silent" ));
+        if (pgraph[i].getReader3()==NULL) pgraph[i].setReader3(new TMVA::Reader( "!Color:!Silent" ));
+        
+        TMVA::Reader *reader1 = pgraph[i].getReader1();
+        float *x1 = pgraph[i].getX1();
+        for (int j=0;j<8;j++) {
+            reader1->AddVariable(inputVar1[j].c_str(),&x1[j]);
+        }
+        reader1->BookMVA("MLP method",file1.c_str());
+        
+        TMVA::Reader *reader2 = pgraph[i].getReader2();
+        float *x2 = pgraph[i].getX2();
+        for (int j=0;j<9;j++) {
+            reader2->AddVariable(inputVar2[j].c_str(),&x2[j]);
+        }
+        reader2->BookMVA("MLP method",file2.c_str());
+        
+        TMVA::Reader *reader3 = pgraph[i].getReader3();
+        float *x3 = pgraph[i].getX3();
+        for (int j=0;j<10;j++) {
+            reader3->AddVariable(inputVar3[j].c_str(),&x3[j]);
+        }
+        reader3->BookMVA("MLP method",file3.c_str());
+    }
+
+    for (auto &t : tgraph) {
+        auto &g = t.second;
+        if (g.getReader1()==NULL) g.setReader1(new TMVA::Reader( "!Color:!Silent" ));
+        if (g.getReader2()==NULL) g.setReader2(new TMVA::Reader( "!Color:!Silent" ));
+        if (g.getReader3()==NULL) g.setReader3(new TMVA::Reader( "!Color:!Silent" ));
+
+        TMVA::Reader *reader1 = g.getReader1();
+        float *x1 = g.getX1();
+        for (int j=0;j<8;j++) {
+            reader1->AddVariable(inputVar1[j].c_str(),&x1[j]);
+        }
+        reader1->BookMVA("MLP method",file1.c_str());
+        
+        TMVA::Reader *reader2 = g.getReader2();
+        float *x2 = g.getX2();
+        for (int j=0;j<9;j++) {
+            reader2->AddVariable(inputVar2[j].c_str(),&x2[j]);
+        }
+        reader2->BookMVA("MLP method",file2.c_str());
+        
+        TMVA::Reader *reader3 = g.getReader3();
+        float *x3 = g.getX3();
+        for (int j=0;j<10;j++) {
+            reader3->AddVariable(inputVar3[j].c_str(),&x3[j]);
+        }
+        reader3->BookMVA("MLP method",file3.c_str());
+    }
+
+#endif
+    
     for (int i=0;i<NSLICES;i++) {
         if (pgraph[i].getNet1()==NULL) pgraph[i].setNet1(new ReadMLP1(inputVar1));
         if (pgraph[i].getNet2()==NULL) pgraph[i].setNet2(new ReadMLP2(inputVar2));
@@ -427,7 +491,7 @@ void Tracker::initNeuralNetworks()
         if (g.getNet1()==NULL) g.setNet1(new ReadMLP1(inputVar1));
         if (g.getNet2()==NULL) g.setNet2(new ReadMLP2(inputVar2));
         if (g.getNet3()==NULL) g.setNet3(new ReadMLP3(inputVar3));
-    }
+    }    
 
 #else
 

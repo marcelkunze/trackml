@@ -7,7 +7,7 @@ LIBS=-L../lib
 LDFLAGS=$(shell root-config --glibs)
 
 ROOTCFLAGS    = $(shell root-config --cflags)
-ROOTLIBS      = $(shell root-config --libs)
+ROOTLIBS      = $(shell root-config --libs) -lTMVA
 ROOTGLIBS     = $(shell root-config --glibs)
 
 SOURCES=main.cxx
@@ -28,7 +28,7 @@ $(LIBRARY): $(SHOBJ)
 	$(CC) $(INCLUDES) -std=c++11 -fPIC -shared -o $(LIBRARY) $(ROOTLIBS) $(SHOBJ)
 
 libmodel.so: $(SHOBJ) $(HEADERS)
-	g++ -DEVAL -O3 -g -std=c++11 -Wfatal-errors -fPIC -shared -pthread -lpthread -o libmodel.so $(SHOBJ) extern.cxx
+	g++ -DEVAL -O3 -g -std=c++11 -Wfatal-errors -fPIC -shared -pthread -lpthread -o libmodel.so $(ROOTLIBS) $(SHOBJ) extern.cxx
 	zip cloudkitchen.zip libmodel.so detectors.csv adjacency model.py metadata
 	zip cloudkitchen.zip paths/* graph/* xmlp/*
 
@@ -39,7 +39,7 @@ makeGraph: makeGraph.o Trainer.o $(LIBRARY)
 	$(CC) $(LDFLAGS) makeGraph.o Trainer.o $(LIBRARY) $(ROOTLIBS) $(LIBS) -o $@
 
 %.o: %.cxx $(HEADERS)
-	$(CC) -DEVAL $(CFLAGS) $< -o $@ 
+	$(CC) -DEVAL $(CFLAGS) $(INCLUDES) $< -o $@ 
 
 Trainer.o: Trainer.cxx $(HEADERS)
 	$(CC) $(CFLAGS) $(INCLUDES) $< -o $@

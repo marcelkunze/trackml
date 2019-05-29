@@ -9,6 +9,10 @@
 #include "Reconstruction.h"
 #include "PolarModule.h"
 #ifdef USETMVA
+#ifdef TMVAREADER
+#include "TMVA/Tools.h"
+#include "TMVA/Reader.h"
+#endif
 #include "TMVAClassification_MLP1.h"
 #include "TMVAClassification_MLP2.h"
 #include "TMVAClassification_MLP3.h"
@@ -274,6 +278,19 @@ double Reconstruction::recall1(Graph<long long> &g,int a, int b, double f1, doub
     point &p2 = polar[b];
     
 #ifdef USETMVA
+#ifdef TMVAREADER
+    TMVA::Reader *reader = g.getReader1();
+    float *x = g.getX1();
+    x[0] = p1.x; // rz1
+    x[1] = p1.y; // phi1
+    x[2] = p1.z; // z1
+    x[3] = p2.x; // rz2
+    x[4] = p2.y; // phi2
+    x[5] = p2.z; // z2
+    x[6] = f1; // dirmiss1
+    x[7] = f2; // dirmiss2    
+    double recall = reader->EvaluateMVA("MLP method");
+#else
     vector<double> x;
     x.push_back(p1.x);
     x.push_back(p1.y);
@@ -284,6 +301,8 @@ double Reconstruction::recall1(Graph<long long> &g,int a, int b, double f1, doub
     x.push_back(f1);
     x.push_back(f2);
     double recall = g.getNet1()->GetMvaValue(x);
+#endif
+    
 #else
 
     float x[10];
@@ -319,6 +338,20 @@ double Reconstruction::recall2(Graph<long long> &g,int a, int b, double f1, doub
     point &p2 = polar[b];
 
 #ifdef USETMVA
+#ifdef TMVAREADER
+    TMVA::Reader *reader = g.getReader2();
+    float *x = g.getX2();
+    x[0] = p1.x; // rz1
+    x[1] = p1.y; // phi1
+    x[2] = p1.z; // z1
+    x[3] = p2.x; // rz2
+    x[4] = p2.y; // phi2
+    x[5] = p2.z; // z2
+    x[6] = f1; // dirmiss1
+    x[7] = f2; // dirmiss2
+    x[8] = log(f3); // score
+    double recall = reader->EvaluateMVA("MLP method");
+#else
     vector<double> x;
     x.push_back(p1.x);
     x.push_back(p1.y);
@@ -330,6 +363,8 @@ double Reconstruction::recall2(Graph<long long> &g,int a, int b, double f1, doub
     x.push_back(f2);
     x.push_back(log(f3));
     double recall = g.getNet2()->GetMvaValue(x);
+#endif
+    
 #else
 
     float x[10];
@@ -379,6 +414,21 @@ double Reconstruction::recall3(Graph<long long> &g,int a, int b, int c, double f
     point &p3 = polar[c];
     
 #ifdef USETMVA
+#ifdef TMVAREADER
+    TMVA::Reader *reader = g.getReader3();
+    float *x = g.getX3();
+    x[0] = p1.x; // rz1
+    x[1] = p1.y; // phi1
+    x[2] = p1.z; // z1
+    x[3] = p2.x; // rz2
+    x[4] = p2.y; // phi2
+    x[5] = p2.z; // z2
+    x[6] = p3.x; // rz3
+    x[7] = p3.y; // phi23
+    x[8] = p3.z; // z3
+    x[9] = log(f1); // score
+    double recall = reader->EvaluateMVA("MLP method");
+#else
     vector<double> x;
     x.push_back(p1.x);
     x.push_back(p1.y);
@@ -391,6 +441,8 @@ double Reconstruction::recall3(Graph<long long> &g,int a, int b, int c, double f
     x.push_back(p3.z);
     x.push_back(log(f1));
     double recall = g.getNet3()->GetMvaValue(x);
+#endif
+    
 #else
 
     float x[12];

@@ -5,7 +5,8 @@
 
 // Reconstruction
 
-//#define USETMVA
+#define USETMVA
+//#define TMVAREADER
 #define FOLDEDINPUT1
 #define FOLDEDINPUT2
 #define STARTLAYERS 30
@@ -28,13 +29,15 @@
 
 #define TILESDIR "graph"
 #define SLICEDIR "paths"
-#define XMLP1DIR "xmlp"
-#define XMLP2DIR "xmlp"
-#define XMLP3DIR "xmlp"
+#define XMLPDIR  "xmlp"
 
 #define NETFILE1 "XMLP1.net"
 #define NETFILE2 "XMLP2.net"
 #define NETFILE3 "XMLP3.net"
+
+#define TMVAFILE1 "TMVAClassification_MLP1.weights.xml"
+#define TMVAFILE2 "TMVAClassification_MLP2.weights.xml"
+#define TMVAFILE3 "TMVAClassification_MLP3.weights.xml"
 
 #define THRESHOLD1 0.15
 #define THRESHOLD2 0.55

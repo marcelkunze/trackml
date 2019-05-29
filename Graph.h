@@ -33,6 +33,7 @@ private:
     ReadMLP2 *mlp2;
     ReadMLP3 *mlp3;
     TMVA::Reader *reader1,*reader2,*reader3;
+    float x1[12],x2[12],x3[12];
     
 public:
     
@@ -52,6 +53,16 @@ public:
     ReadMLP1 *getNet1() const { return mlp1;}
     ReadMLP2 *getNet2() const { return mlp2;}
     ReadMLP3 *getNet3() const { return mlp3;}
+    
+    void setReader1(TMVA::Reader *net) {reader1 = net;}
+    void setReader2(TMVA::Reader *net) {reader2 = net;}
+    void setReader3(TMVA::Reader *net) {reader3 = net;}
+    TMVA::Reader *getReader1() const { return reader1;}
+    TMVA::Reader *getReader2() const { return reader2;}
+    TMVA::Reader *getReader3() const { return reader3;}
+    float *getX1() { return x1;}
+    float *getX2() { return x2;}
+    float *getX3() { return x3;}
 
     void add(T n) // node
     {
