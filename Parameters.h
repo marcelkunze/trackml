@@ -5,7 +5,7 @@
 
 // Reconstruction
 
-#define USETMVA
+//#define USETMVA
 //#define TMVAREADER
 #define FOLDEDINPUT1
 #define FOLDEDINPUT2
