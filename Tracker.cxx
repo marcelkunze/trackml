@@ -499,15 +499,15 @@ void Tracker::initNeuralNetworks()
         string name1(NETFILE1);
         string name2(NETFILE2);
         string name3(NETFILE3);
-        if (pgraph[i].net1()==NULL) pgraph[i].setNet1(new XMLP((path1+name1).c_str()));
-        if (pgraph[i].net2()==NULL) pgraph[i].setNet2(new XMLP((path2+name2).c_str()));
-        if (pgraph[i].net3()==NULL) pgraph[i].setNet3(new XMLP((path3+name3).c_str()));
+        if (pgraph[i].net1()==NULL) pgraph[i].setNet1(new XMLP((directory+name1).c_str()));
+        if (pgraph[i].net2()==NULL) pgraph[i].setNet2(new XMLP((directory+name2).c_str()));
+        if (pgraph[i].net3()==NULL) pgraph[i].setNet3(new XMLP((directory+name3).c_str()));
     }
     
     for (auto &t : tgraph) {
-        string netfile1(string(workPath)+"/"+XMLP1DIR+"/"+NETFILE1);
-        string netfile2(string(workPath)+"/"+XMLP2DIR+"/"+NETFILE2);
-        string netfile3(string(workPath)+"/"+XMLP3DIR+"/"+NETFILE3);
+        string netfile1(string(workPath)+"/"+XMLPDIR+"/"+NETFILE1);
+        string netfile2(string(workPath)+"/"+XMLPDIR+"/"+NETFILE2);
+        string netfile3(string(workPath)+"/"+XMLPDIR+"/"+NETFILE3);
         auto &g = t.second;
         if (g.net1()==NULL) g.setNet1(new XMLP(netfile1.c_str()));
         if (g.net2()==NULL) g.setNet2(new XMLP(netfile2.c_str()));
