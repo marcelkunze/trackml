@@ -2,11 +2,13 @@
 #include "TString.h"
 #include "TMVA/Factory.h"
 
+//#define FOLDEDINPUT
+
 using namespace std;
 
 int FILENUMBER(21100);
-//int NFILES(10);
-int NFILES(5);
+//int NFILES(20);
+int NFILES(10);
 
 void mlp3(int nfiles=NFILES) {
     
@@ -34,6 +36,18 @@ void mlp3(int nfiles=NFILES) {
     TTree *tbackground = tracks3->CopyTree(background);
 
     auto *loader = new TMVA::DataLoader("dataset_mlp");
+#ifdef FOLDEDINPUT
+    loader->AddVariable("rz1");
+    loader->AddVariable("abs(abs(phi1)-1.57079632679)");
+    loader->AddVariable("abs(z1)");
+    loader->AddVariable("rz2");
+    loader->AddVariable("abs(abs(phi2)-1.57079632679)");
+    loader->AddVariable("abs(z2)");
+    loader->AddVariable("rz3");
+    loader->AddVariable("abs(abs(phi3)-1.57079632679)");
+    loader->AddVariable("abs(z3)");
+    loader->AddVariable("log(score)");
+#else
     loader->AddVariable("rz1");
     loader->AddVariable("phi1");
     loader->AddVariable("z1");
@@ -44,15 +58,14 @@ void mlp3(int nfiles=NFILES) {
     loader->AddVariable("phi3");
     loader->AddVariable("z3");
     loader->AddVariable("log(score)");
-    
+#endif
     
     loader->AddSignalTree(tsignal);
     loader->AddBackgroundTree(tbackground);
-    //loader->PrepareTrainingAndTestTree(TCut(""),"nTrain_Signal=950000:nTrain_Background=950000:SplitMode=Random:NormMode=NumEvents:!V");
-    loader->PrepareTrainingAndTestTree(TCut(""),"nTrain_Signal=250000:nTrain_Background=250000:SplitMode=Random:NormMode=NumEvents:!V");
-    //loader->PrepareTrainingAndTestTree(TCut(""),"nTrain_Signal=50000:nTrain_Background=50000:SplitMode=Random:NormMode=NumEvents:!V");
+    loader->PrepareTrainingAndTestTree(TCut(""),"nTrain_Signal=850000:nTrain_Background=850000:SplitMode=Random:NormMode=NumEvents:!V");
+    //loader->PrepareTrainingAndTestTree(TCut(""),"nTrain_Signal=1800000:nTrain_Background=1800000:SplitMode=Random:NormMode=NumEvents:!V");
     
-    // General layout:x
+    // General layout
 
     TString layoutString = TString("Layout=TANH|128,TANH|128,LINEAR");
     
@@ -79,8 +92,8 @@ void mlp3(int nfiles=NFILES) {
     // Standard implementation, no dependencies.
     TString stdOptions =  dnnOptions + ":Architecture=CPU";
     //factory->BookMethod(loader, TMVA::Types::kDNN, "DNN3", stdOptions);
-    factory->BookMethod(loader, TMVA::Types::kMLP, "MLP3", "!H:!V:NeuronType=tanh:VarTransform=N:NCycles=100:HiddenLayers=15,5:TestRate=5:!UseRegulator" );
-    factory->BookMethod(loader, TMVA::Types::kMLP, "MLP315", "!H:!V:NeuronType=tanh:VarTransform=N:NCycles=100:HiddenLayers=15:TestRate=5:!UseRegulator" );
+    factory->BookMethod(loader, TMVA::Types::kMLP, "MLP3", "!H:!V:NeuronType=tanh:VarTransform=N:NCycles=500:HiddenLayers=15,5:TestRate=5:!UseRegulator" );
+    //factory->BookMethod(loader, TMVA::Types::kMLP, "MLP315", "!H:!V:NeuronType=tanh:VarTransform=N:NCycles=100:HiddenLayers=15:TestRate=5:!UseRegulator" );
   
     factory->TrainAllMethods();
     
