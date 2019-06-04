@@ -414,9 +414,24 @@ void Tracker::initNeuralNetworks()
     
 #ifdef USETMVA
 
-    vector<string> inputVar1 = { "rz1", "phi1", "z1", "rz2", "phi2", "z2", "f0", "f1" };
-    vector<string> inputVar2 = { "rz1", "phi1", "z1", "rz2", "phi2", "z2", "f0", "f1", "log(score)" };
-    vector<string> inputVar3 = { "rz1", "phi1", "z1", "rz2", "phi2", "z2", "rz3", "phi3", "z3", "log(score)" };
+    // TMVA setup
+#ifdef FOLDEDINPUT1
+   vector<string> inputVar1 = {"rz1","abs(abs(phi1)-1.57079632679)","abs(z1)","rz2","abs(abs(phi2)-1.57079632679)","abs(z2)","f0","f1"};
+#else
+    vector<string> inputVar1 = {"rz1","phi1","z1","rz2","phi2","z2","f0","f1"};
+#endif
+    
+#ifdef FOLDEDINPUT2
+   vector<string> inputVar2 = {"rz1","abs(abs(phi1)-1.57079632679)","abs(z1)","rz2","abs(abs(phi2)-1.57079632679)","abs(z2)","f0","f1","log(score)"};
+#else
+    vector<string> inputVar2 = {"rz1","phi1","z1","rz2","phi2","z2","f0","f1","log(score)"};
+#endif
+    
+#ifdef FOLDEDINPUT3
+    vector<string> inputVar3 = {"rz1","abs(abs(phi1)-1.57079632679)","abs(z1)","rz2","abs(abs(phi2)-1.57079632679)","abs(z2)","rz3","abs(abs(phi3)-1.57079632679)","abs(z3)","log(score)"};
+#else
+     vector<string> inputVar3 = {"rz1","phi1","z1","rz2","phi2","z2","rz3","phi3","z3","log(score)"};
+#endif
 
 #ifdef TMVAREADER
     string file1 = string(directory)+"/"+TMVAFILE1;

@@ -278,28 +278,31 @@ double Reconstruction::recall1(Graph<long long> &g,int a, int b, double f1, doub
     point &p2 = polar[b];
     
 #ifdef USETMVA
+    float *x1 = g.getX1();
+#ifdef FOLDEDINPUT1
+    x1[0] = p1.x; // rz1
+    x1[1] = fabs(fabs(p1.y)-M_PI_2); // phi1
+    x1[2] = fabs(p1.z); // z1
+    x1[3] = p2.x; // rz2
+    x1[4] = fabs(fabs(p2.y)-M_PI_2); // phi2
+    x1[5] = fabs(p2.z); // z2
+#else
+    x1[0] = p1.x;
+    x1[1] = p1.y;
+    x1[2] = p1.z;
+    x1[3] = p2.x;
+    x1[4] = p2.y;
+    x1[5] = p2.z;
+#endif
+    x1[6] = f1; // dirmiss1
+    x1[7] = f2; // dirmiss2
+    
 #ifdef TMVAREADER
     TMVA::Reader *reader = g.getReader1();
-    float *x = g.getX1();
-    x[0] = p1.x; // rz1
-    x[1] = p1.y; // phi1
-    x[2] = p1.z; // z1
-    x[3] = p2.x; // rz2
-    x[4] = p2.y; // phi2
-    x[5] = p2.z; // z2
-    x[6] = f1; // dirmiss1
-    x[7] = f2; // dirmiss2    
     double recall = reader->EvaluateMVA("MLP method");
 #else
     vector<double> x;
-    x.push_back(p1.x);
-    x.push_back(p1.y);
-    x.push_back(p1.z);
-    x.push_back(p2.x);
-    x.push_back(p2.y);
-    x.push_back(p2.z);
-    x.push_back(f1);
-    x.push_back(f2);
+    for (int i=0;i<8;i++) x.push_back(x1[i]);
     double recall = g.getNet1()->GetMvaValue(x);
 #endif
     
@@ -338,30 +341,32 @@ double Reconstruction::recall2(Graph<long long> &g,int a, int b, double f1, doub
     point &p2 = polar[b];
 
 #ifdef USETMVA
+    float *x2 = g.getX2();
+#ifdef FOLDEDINPUT2
+    x2[0] = p1.x; // rz1
+    x2[1] = fabs(fabs(p1.y)-M_PI_2); // phi1
+    x2[2] = fabs(p1.z); // z1
+    x2[3] = p2.x; // rz2
+    x2[4] = fabs(fabs(p2.y)-M_PI_2); // phi2
+    x2[5] = fabs(p2.z); // z2
+#else
+    x2[0] = p1.x;
+    x2[1] = p1.y;
+    x2[2] = p1.z;
+    x2[3] = p2.x;
+    x2[4] = p2.y;
+    x2[5] = p2.z;
+#endif
+    x2[6] = f1; // dirmiss1
+    x2[7] = f2; // dirmiss2
+    x2[8] = log(f3); // score
+    
 #ifdef TMVAREADER
     TMVA::Reader *reader = g.getReader2();
-    float *x = g.getX2();
-    x[0] = p1.x; // rz1
-    x[1] = p1.y; // phi1
-    x[2] = p1.z; // z1
-    x[3] = p2.x; // rz2
-    x[4] = p2.y; // phi2
-    x[5] = p2.z; // z2
-    x[6] = f1; // dirmiss1
-    x[7] = f2; // dirmiss2
-    x[8] = log(f3); // score
     double recall = reader->EvaluateMVA("MLP method");
 #else
     vector<double> x;
-    x.push_back(p1.x);
-    x.push_back(p1.y);
-    x.push_back(p1.z);
-    x.push_back(p2.x);
-    x.push_back(p2.y);
-    x.push_back(p2.z);
-    x.push_back(f1);
-    x.push_back(f2);
-    x.push_back(log(f3));
+    for (int i=0;i<9;i++) x.push_back(x2[i]);
     double recall = g.getNet2()->GetMvaValue(x);
 #endif
     
