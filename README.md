@@ -23,7 +23,7 @@ Running two threads the execution time is on average about 7 seconds per event a
 
 ## SOFTWARE
 * C++11 with STL
-* [Neural Network Objects](https://github.com/marcelkunze/rhonno) for training
+* [Neural Network Objects](https://github.com/marcelkunze/rhonno) or [TMVA](https://root.cern.ch/tmva) for training
 * [ROOT framework](https://root.cern.ch/) for training
 * docker or singularity for testing and tuning
 
